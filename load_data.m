@@ -4,6 +4,10 @@
 % Description: This scripts parses the 17 text files that make up a 
 % dataset into Matlab arrays. Run this script within the the dataset 
 % directory.
+
+clear; clc; close all;
+
+%% Load Data
 dir = 'UTIAS-dataset/MRCLAM_Dataset1/';
 
 n_robots = 5;
@@ -23,20 +27,31 @@ n_landmarks = length(Landmark_Groundtruth);
 for i=1:n_robots
  
     disp(['Reading robot ' num2str(i) ' groundtruth'])
-    [time x y theta] = textread([dir 'Robot' num2str(i) '_Groundtruth.dat'], '%f %f %f %f','commentstyle','shell');
-    eval(['Robot' num2str(i) '_Groundtruth = [time x y theta];']); 
-    clear time x y theta;
+    [gt x y theta] = textread([dir 'Robot' num2str(i) '_Groundtruth.dat'], '%f %f %f %f','commentstyle','shell');
+    eval(['Robot' num2str(i) '_Groundtruth = [gt-gt(1) x y theta];']); 
+    clear x y theta;
 
     disp(['Reading robot ' num2str(i) ' odometry'])
     [time, v, w] = textread([dir 'Robot' num2str(i) '_Odometry.dat'], '%f %f %f','commentstyle','shell');
-    eval(['Robot' num2str(i) '_Odometry = [time v w];']);
+    eval(['Robot' num2str(i) '_Odometry = [time-gt(1) v w];']);
     clear time v w;
     
     disp(['Reading robot ' num2str(i) ' measurements'])
     [time, barcode_num, r b] = textread([dir 'Robot' num2str(i) '_Measurement.dat'], '%f %f %f %f','commentstyle','shell');
-    eval(['Robot' num2str(i) '_Measurement = [time barcode_num r b];']);
+    eval(['Robot' num2str(i) '_Measurement = [time-gt(1) barcode_num r b];']);
     clear time barcode_num r b;
 
+    disp(['Calculating robot ' num2str(i) ' covariance'])
+    eval(['[N,~] = size(Robot' num2str(i) '_Groundtruth);']);
+    eval(['xarr = Robot' num2str(i) '_Groundtruth(:,2);']); 
+    eval(['yarr = Robot' num2str(i) '_Groundtruth(:,3);']);
+    eval(['tharr = Robot' num2str(i) '_Groundtruth(:,4);']);
+    eval(['Q' num2str(i) ' = calcQ(xarr,yarr,tharr,N);']);
+    eval(['[N,~] = size(Robot' num2str(i) '_Measurement);']);
+    eval(['rarr = Robot' num2str(i) '_Measurement(:,3);']);
+    eval(['barr = Robot' num2str(i) '_Measurement(:,4);']);
+    eval(['R' num2str(i) ' = calcR(rarr,barr,N);']);
+    clear N xarr yarr tharr rarr barr
 end
-clear i
+clear i dir
 disp('Parsing Complete')

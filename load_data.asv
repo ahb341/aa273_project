@@ -1,0 +1,86 @@
+% UTIAS Multi-Robot Cooperative Localization and Mapping Dataset
+% produced by Keith Leung (keith.leung@robotics.utias.utoronto.ca) 2009
+% Matlab script loadMRCLAMdataSet.m
+% Description: This scripts parses the 17 text files that make up a 
+% dataset into Matlab arrays. Run this script within the the dataset 
+% directory.
+
+clear; clc; close all;
+
+%% Load Data
+dir = 'UTIAS-dataset/MRCLAM_Dataset1/';
+
+n_robots = 5;
+
+disp('Parsing Dataset')
+disp('Reading barcode numbers')
+[subject_num, barcode_num] = textread([dir,'Barcodes.dat'], '%u %u','commentstyle','shell');
+Barcodes = [subject_num, barcode_num];
+clear subject_num barcode_num;
+
+disp('Reading landmark groundtruth')
+[subject_num x y x_sd y_sd] = textread([dir,'Landmark_Groundtruth.dat'], '%f %f %f %f %f','commentstyle','shell');
+Landmark_Groundtruth = [subject_num x y x_sd y_sd];
+clear subject_num x y x_sd y_sd;
+n_landmarks = length(Landmark_Groundtruth); 
+
+for i=1:n_robots
+ 
+    disp(['Reading robot ' num2str(i) ' groundtruth'])
+    [time x y theta] = textread([dir 'Robot' num2str(i) '_Groundtruth.dat'], '%f %f %f %f','commentstyle','shell');
+    eval(['Robot' num2str(i) '_Groundtruth = [time x y theta];']); 
+    clear time x y theta;
+
+    disp(['Reading robot ' num2str(i) ' odometry'])
+    [time, v, w] = textread([dir 'Robot' num2str(i) '_Odometry.dat'], '%f %f %f','commentstyle','shell');
+    eval(['Robot' num2str(i) '_Odometry = [time v w];']);
+    clear time v w;
+    
+    disp(['Reading robot ' num2str(i) ' measurements'])
+    [time, barcode_num, r b] = textread([dir 'Robot' num2str(i) '_Measurement.dat'], '%f %f %f %f','commentstyle','shell');
+    eval(['Robot' num2str(i) '_Measurement = [time barcode_num r b];']);
+    clear time barcode_num r b;
+
+    disp(['Calculating robot ' num2str(i) ' covariance'])
+    eval([N,~])
+
+end
+clear i
+disp('Parsing Complete')
+
+%% Calculate Covariance
+% Robot 1
+% Process Noise
+[N,~] = size(Robot1_Groundtruth);
+xarr = Robot1_Groundtruth(:,2); yarr = Robot1_Groundtruth(:,3); 
+tharr = Robot1_Groundtruth(:,4);
+Q1 = calcQ(xarr,yarr,tharr,N);
+% Measurement Noise
+[N,~] = size(Robot1_Measurement);
+xarr = Robot1_Groundtruth(:,2); yarr = Robot1_Groundtruth(:,3); 
+tharr = Robot1_Groundtruth(:,4);
+Q1 = calcQ(xarr,yarr,tharr,N);
+
+% Robot 2
+[N,~] = size(Robot2_Groundtruth);
+xarr = Robot2_Groundtruth(:,2); yarr = Robot2_Groundtruth(:,3); 
+tharr = Robot2_Groundtruth(:,4);
+Q2 = calculate_cov(xarr,yarr,tharr,N);
+
+% Robot 3
+[N,~] = size(Robot3_Groundtruth);
+xarr = Robot3_Groundtruth(:,2); yarr = Robot3_Groundtruth(:,3); 
+tharr = Robot3_Groundtruth(:,4);
+Q3 = calculate_cov(xarr,yarr,tharr,N);
+
+% Robot 4
+[N,~] = size(Robot4_Groundtruth);
+xarr = Robot4_Groundtruth(:,2); yarr = Robot4_Groundtruth(:,3); 
+tharr = Robot4_Groundtruth(:,4);
+Q4 = calculate_cov(xarr,yarr,tharr,N);
+
+% Robot 5
+[N,~] = size(Robot5_Groundtruth);
+xarr = Robot5_Groundtruth(:,2); yarr = Robot5_Groundtruth(:,3); 
+tharr = Robot5_Groundtruth(:,4);
+Q5 = calculate_cov(xarr,yarr,tharr,N);
