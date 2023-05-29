@@ -1,0 +1,51 @@
+clear all
+close all
+clc
+
+%% System Parameter
+
+M = 15;                     % number of landmark
+simulationTime = 50000;     % how many time step we want to simulate
+rcomm = 0.3;                % within this range, robot communicates
+
+%% 
+run("load_data.m")
+
+%% Insert the time index into the odometry (control input) data
+
+time_index = 1:Robot1_Odometry(:,1);
+Robot
+
+
+%% robot 1 dataset
+
+mu_1 = zeros(3 + M*2, simulationTime);
+mu_1(1,:) = [3 -3 2];           % initialize mu_0|0
+sigma_1 = 7 * eye( 3 + M*2 );   % only need to store the covariance matrix when we need to plot the error ellipse. skip right here.
+
+%% robot 2 dataset
+
+mu_2 = zeros(3 + M*2, simulationTime);
+mu_2(1,:) = [0.5 -1.5 1.5];
+sigma_2 = 7 * eye( 3 + M*2 );
+
+%% robot 3 dataset 
+
+mu_3 = zeros(3 + M*2, simulationTime);
+mu_3(1,:) = [4 2.5 -2.5];
+sigma_3 = 7 * eye( 3 + M*2 );
+
+%% robot 4 dataset
+
+mu_4 = zeros(3 + M*2, simulationTime);
+mu_4(1,:) = [1 2 -0.5];
+sigma_4 = 7 * eye( 3 + M*2 );
+
+%% robot 5 dataset
+
+mu_5 = zeros(3 + M*2, simulationTime);
+mu_5(1,:) = [2.5 -1.5 1];
+sigma_5 = 7 * eye( 3 + M*2 );
+
+%% 
+
