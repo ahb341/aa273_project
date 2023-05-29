@@ -9,6 +9,7 @@ run("load_data.m")
 
 M = 15;                     % number of landmark
 simulationTime = 1000;      % the time horizon of our simulation
+dt = 0.0001;
 rcomm = 0.3;                % within this range, robot communicates
 m = 2;                      % number of control inputs
 
@@ -19,35 +20,35 @@ numColumns_u = m * 5;                   % Number of columns of u matrix
 numColumns_y = 3 * 5;                   % Number of columns of y matrix
 
 % robot1
-mu_1 = zeros(simulationTime, 3 + M*2);
+mu_1 = zeros(simulationTime*(1/dt), 3 + M*2);
 mu_1(1,:) = [3 -3 2 zeros(1, M*2)];     % initialize mu_0|0
 sigma_1 = 7 * eye( 3 + M*2 );           % only need to store the covariance matrix when we need to plot the error ellipse. skip right here.
 u1 = NaN(maxNumRows, numColumns_u);
 y1 = NaN(maxNumRows, numColumns_y);     % tricky one. deal with it later
 
 % robot2
-mu_2 = zeros(simulationTime, 3 + M*2);
+mu_2 = zeros(simulationTime*(1/dt), 3 + M*2);
 mu_2(1,:) = [0.5 -1.5 1.5 zeros(1, M*2)];
 sigma_2 = 7 * eye( 3 + M*2 );
 u2 = NaN(maxNumRows, numColumns_u);
 y2 = NaN(maxNumRows, numColumns_y);     % tricky one. deal with it later
 
 % robot3
-mu_3 = zeros(simulationTime, 3 + M*2);
+mu_3 = zeros(simulationTime*(1/dt), 3 + M*2);
 mu_3(1,:) = [4 2.5 -2.5 zeros(1, M*2)];
 sigma_3 = 7 * eye( 3 + M*2 );
 u3 = NaN(maxNumRows, numColumns_u);
 y3 = NaN(maxNumRows, numColumns_y);     % tricky one. deal with it later
 
 % robot4
-mu_4 = zeros(simulationTime, 3 + M*2);
+mu_4 = zeros(simulationTime*(1/dt), 3 + M*2);
 mu_4(1,:) = [1 2 -0.5 zeros(1, M*2)];
 sigma_4 = 7 * eye( 3 + M*2 );
 u4 = NaN(maxNumRows, numColumns_u);
 y4 = NaN(maxNumRows, numColumns_y);     % tricky one. deal with it later
 
 % robot5
-mu_5 = zeros(simulationTime, 3 + M*2);
+mu_5 = zeros(simulationTime*(1/dt), 3 + M*2);
 mu_5(1,:) = [2.5 -1.5 1 zeros(1, M*2)];
 sigma_5 = 7 * eye( 3 + M*2 );
 u5 = NaN(maxNumRows, numColumns_u);
@@ -59,12 +60,12 @@ y5 = NaN(maxNumRows, numColumns_y);     % tricky one. deal with it later
 
 i = 0;      % reference time
 
-while i < 0.0002
+while i < simulationTime
     
     % if we don't have groundtruth data at any specific time step, skip the whole loop
-    % the reference time is super ugly. so I round it first
+    % the reference time is super ugly. so I round it
     if i ~= round(Robot1_Groundtruth(:,1), 3)
-        i = i + 0.0001;
+        i = i + dt;
         continue
     end
 
@@ -226,5 +227,5 @@ while i < 0.0002
     end
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
-    i = i + 0.0001;
+    i = i + dt;
 end
