@@ -11,23 +11,6 @@ rcomm = 0.3;                % within this range, robot communicates
 %% 
 run("load_data.m")
 
-% %% Insert the time index into the odometry (control input) data
-% 
-% time_index = 1 : length(Robot1_Odometry(:,1));
-% Robot1_Odometry = [Robot1_Odometry transpose(time_index)];
-% 
-% time_index = 1 : length(Robot2_Odometry(:,1));
-% Robot2_Odometry = [Robot2_Odometry transpose(time_index)];
-% 
-% time_index = 1 : length(Robot3_Odometry(:,1));
-% Robot3_Odometry = [Robot3_Odometry transpose(time_index)];
-% 
-% time_index = 1 : length(Robot4_Odometry(:,1));
-% Robot4_Odometry = [Robot4_Odometry transpose(time_index)];
-% 
-% time_index = 1 : length(Robot5_Odometry(:,1));
-% Robot5_Odometry = [Robot5_Odometry transpose(time_index)];
-
 %% robot 1 dataset
 
 mu_1 = zeros(simulationTime, 3 + M*2);
