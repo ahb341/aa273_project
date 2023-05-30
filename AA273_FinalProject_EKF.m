@@ -9,15 +9,15 @@ run("load_data.m")
 
 M = 15;                     % number of landmark
 simulationTime = 1000;      % the time horizon of our simulation
-dt = 0.0001;
-rcomm = 0.3;                % within this range, robot communicates
+dt = 0.0001;                % time increment
+rcomm = 2;                  % within this range, robot communicates. Data retrieved from the paper.
 m = 2;                      % number of control inputs
 
 %% Dataset
 
 maxNumRows = 100;                       % Maximum possible number of rows for u and y matrix
-numColumns_u = m * 5;                   % Number of columns of u matrix
-numColumns_y = 3 * 5;                   % Number of columns of y matrix
+numColumns_u = (m+1) * 5;               % Number of columns of u matrix
+numColumns_y = (3+1) * 5;               % Number of columns of y matrix
 
 % robot1
 mu_1 = zeros(simulationTime*(1/dt), 3 + M*2);
@@ -56,11 +56,11 @@ y5 = NaN(maxNumRows, numColumns_y);     % tricky one. deal with it later
 
 % isnan, nanmean, nanstd
 
-%% Decentralized SLAM Algorithm
+%% Decentralized Cooperative SLAM Algorithm
 
 i = 0;      % reference time
 
-while i < simulationTime
+while i < 0.0002
     
     % if we don't have groundtruth data at any specific time step, skip the whole loop
     % the reference time is super ugly. so I round it
@@ -73,45 +73,45 @@ while i < simulationTime
     rowIndex = find(round(Robot1_Groundtruth(:, 1), 3) == i, 1);
 
     % import all u and y data before simulation time i for each robot
-    u_Before_i = Robot1_Odometry(round(Robot1_Odometry(:, 1),3) <= i, end-1:end);
+    u_Before_i = Robot1_Odometry(round(Robot1_Odometry(:, 1),3) <= i, :);
     numRows = size(u_Before_i, 1);
-    u1(1:numRows, 1:2) = u_Before_i;
+    u1(1:numRows, 1:3) = u_Before_i;
 
-    u_Before_i = Robot2_Odometry(round(Robot2_Odometry(:, 1),3) <= i, end-1:end);
+    u_Before_i = Robot2_Odometry(round(Robot2_Odometry(:, 1),3) <= i, :);
     numRows = size(u_Before_i, 1);
-    u2(1:numRows, 3:4) = u_Before_i;
+    u2(1:numRows, 4:6) = u_Before_i;
 
-    u_Before_i = Robot3_Odometry(round(Robot3_Odometry(:, 1),3) <= i, end-1:end);
+    u_Before_i = Robot3_Odometry(round(Robot3_Odometry(:, 1),3) <= i, :);
     numRows = size(u_Before_i, 1);
-    u3(1:numRows, 5:6) = u_Before_i;
+    u3(1:numRows, 7:9) = u_Before_i;
 
-    u_Before_i = Robot4_Odometry(round(Robot4_Odometry(:, 1),3) <= i, end-1:end);
+    u_Before_i = Robot4_Odometry(round(Robot4_Odometry(:, 1),3) <= i, :);
     numRows = size(u_Before_i, 1);
-    u4(1:numRows, 7:8) = u_Before_i;
+    u4(1:numRows, 10:12) = u_Before_i;
 
-    u_Before_i = Robot5_Odometry(round(Robot5_Odometry(:, 1),3) <= i, end-1:end);
+    u_Before_i = Robot5_Odometry(round(Robot5_Odometry(:, 1),3) <= i, :);
     numRows = size(u_Before_i, 1);
-    u5(1:numRows, 9:10) = u_Before_i;
+    u5(1:numRows, 13:15) = u_Before_i;
 
-    y_Before_i = Robot1_Measurement(round(Robot1_Measurement(:, 1),3) <= i, end-1:end);
+    y_Before_i = Robot1_Measurement(round(Robot1_Measurement(:, 1),3) <= i, :);
     numRows = size(y_Before_i, 1);
-    y1(1:numRows, 1:3) = y_Before_i;
+    y1(1:numRows, 1:4) = y_Before_i;
 
-    y_Before_i = Robot2_Measurement(round(Robot2_Measurement(:, 1),3) <= i, end-1:end);
+    y_Before_i = Robot2_Measurement(round(Robot2_Measurement(:, 1),3) <= i, :);
     numRows = size(y_Before_i, 1);
-    y2(1:numRows, 4:6) = y_Before_i;
+    y2(1:numRows, 5:8) = y_Before_i;
 
-    y_Before_i = Robot3_Measurement(round(Robot3_Measurement(:, 1),3) <= i, end-1:end);
+    y_Before_i = Robot3_Measurement(round(Robot3_Measurement(:, 1),3) <= i, :);
     numRows = size(y_Before_i, 1);
-    y3(1:numRows, 7:9) = y_Before_i;
+    y3(1:numRows, 9:12) = y_Before_i;
 
-    y_Before_i = Robot4_Measurement(round(Robot4_Measurement(:, 1),3) <= i, end-1:end);
+    y_Before_i = Robot4_Measurement(round(Robot4_Measurement(:, 1),3) <= i, :);
     numRows = size(y_Before_i, 1);
-    y4(1:numRows, 10:12) = y_Before_i;
+    y4(1:numRows, 13:16) = y_Before_i;
 
-    y_Before_i = Robot5_Measurement(round(Robot5_Measurement(:, 1),3) <= i, end-1:end);
+    y_Before_i = Robot5_Measurement(round(Robot5_Measurement(:, 1),3) <= i, :);
     numRows = size(y_Before_i, 1);
-    y5(1:numRows, 13:15) = y_Before_i;
+    y5(1:numRows, 17:20) = y_Before_i;
 
 % % % % % % % % % Should write a function for this part % % % % % % % % % 
 
@@ -120,10 +120,10 @@ while i < simulationTime
     if norm([Robot1_Groundtruth(rowIndex, 2), Robot1_Groundtruth(rowIndex, 3)]...
             - [Robot2_Groundtruth(rowIndex, 2), Robot2_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u1(3,4) = u2(3,4);
-        u2(1,2) = u1(1,2);
-        y1(4:6) = y2(4:6);
-        y2(1:3) = y1(1:3);
+        u1(4:6) = u2(4:6);
+        u2(1:3) = u1(1:3);
+        y1(5:8) = y2(5:8);
+        y2(1:4) = y1(1:4);
     
     end
 
@@ -131,10 +131,10 @@ while i < simulationTime
     if norm([Robot1_Groundtruth(rowIndex, 2), Robot1_Groundtruth(rowIndex, 3)]...
             - [Robot3_Groundtruth(rowIndex, 2), Robot3_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u1(5,6) = u3(5,6);
-        u3(1,2) = u1(1,2);
-        y1(7:9) = y3(7:9);
-        y3(1:3) = y1(1:3);
+        u1(7:9) = u3(7:9);
+        u3(1:3) = u1(1:3);
+        y1(9:12) = y3(9:12);
+        y3(1:4) = y1(1:4);
     
     end
 
@@ -142,10 +142,10 @@ while i < simulationTime
     if norm([Robot1_Groundtruth(rowIndex, 2), Robot1_Groundtruth(rowIndex, 3)]...
             - [Robot4_Groundtruth(rowIndex, 2), Robot4_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u1(7,8) = u4;
-        u4(1,2) = u1;
-        y1(10:12) = y4(10:12);
-        y4(1:3) = y1(1:3);
+        u1(10:12) = u4(10:12);
+        u4(1:3) = u1(1:3);
+        y1(13:16) = y4(13:16);
+        y4(1:4) = y1(1:4);
    
     end
 
@@ -153,10 +153,10 @@ while i < simulationTime
     if norm([Robot1_Groundtruth(rowIndex, 2), Robot1_Groundtruth(rowIndex, 3)]...
             - [Robot5_Groundtruth(rowIndex, 2), Robot5_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u1(9,10) = u5;
-        u5(1,2) = u1;
-        y1(13:15) = y5(13:15);
-        y5(1:3) = y1(1:3);
+        u1(13:15) = u5(13:15);
+        u5(1:3) = u1(1:3);
+        y1(17:20) = y5(17:20);
+        y5(1:4) = y1(1:4);
     
     end
 
@@ -164,10 +164,10 @@ while i < simulationTime
     if norm([Robot2_Groundtruth(rowIndex, 2), Robot2_Groundtruth(rowIndex, 3)]...
             - [Robot3_Groundtruth(rowIndex, 2), Robot3_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u2(5,6) = u3(5,6);
-        u3(3,4) = u2(3,4);
-        y2(7:9) = y3(7:9);
-        y3(4:6) = y2(4:6);
+        u2(7:9) = u3(7:9);
+        u3(4:6) = u2(4:6);
+        y2(9:12) = y3(9:12);
+        y3(5:8) = y2(5:8);
     
     end
 
@@ -175,10 +175,10 @@ while i < simulationTime
     if norm([Robot2_Groundtruth(rowIndex, 2), Robot2_Groundtruth(rowIndex, 3)]...
             - [Robot4_Groundtruth(rowIndex, 2), Robot4_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u2(7,8) = u4(7,8);
-        u4(3,4) = u2(3,4);
-        y2(10:12) = y4(10:12);
-        y4(4:6) = y2(4:6);
+        u2(10:12) = u4(10:12);
+        u4(4:6) = u2(4:6);
+        y2(13:16) = y4(13:16);
+        y4(5:8) = y2(5:8);
 
     end
 
@@ -186,10 +186,10 @@ while i < simulationTime
     if norm([Robot2_Groundtruth(rowIndex, 2), Robot2_Groundtruth(rowIndex, 3)]...
             - [Robot5_Groundtruth(rowIndex, 2), Robot5_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u2(9,10) = u5(9,10);
-        u5(3,4) = u2(3,4);
-        y2(13:15) = y5(13:15);
-        y5(4:6) = y2(4:6);
+        u2(13:15) = u5(13:15);
+        u5(4:6) = u2(4:6);
+        y2(17:20) = y5(17:20);
+        y5(5:8) = y2(5:8);
     
     end
 
@@ -197,10 +197,10 @@ while i < simulationTime
     if norm([Robot3_Groundtruth(rowIndex, 2), Robot3_Groundtruth(rowIndex, 3)]...
             - [Robot4_Groundtruth(rowIndex, 2), Robot4_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u3(7,8) = u4(7,8);
-        u4(5,6) = u3(5,6);
-        y3(10:12) = y4(10:12);
-        y4(7:9) = y3(7:9);
+        u3(10:12) = u4(10:12);
+        u4(7:9) = u3(7:9);
+        y3(13:16) = y4(13:16);
+        y4(9:12) = y3(9:12);
     
     end
 
@@ -208,10 +208,10 @@ while i < simulationTime
     if norm([Robot3_Groundtruth(rowIndex, 2), Robot3_Groundtruth(rowIndex, 3)]...
             - [Robot5_Groundtruth(rowIndex, 2), Robot5_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u3(9,10) = u5(9,10);
-        u5(5,6) = u3(5,6);
-        y3(13:15) = y5(13:15);
-        y5(7:9) = y3(7:9);
+        u3(13:15) = u5(13:15);
+        u5(7:9) = u3(7:9);
+        y3(17:20) = y5(17:20);
+        y5(9:12) = y3(9:12);
     
     end
 
@@ -219,10 +219,10 @@ while i < simulationTime
     if norm([Robot4_Groundtruth(rowIndex, 2), Robot4_Groundtruth(rowIndex, 3)]...
             - [Robot5_Groundtruth(rowIndex, 2), Robot5_Groundtruth(rowIndex, 3)]) <= rcomm
         
-        u4(9,10) = u5(9,10);
-        u5(7,8) = u4(7,8);
-        y4(13:15) = y5(13:15);
-        y5(10:12) = y4(10:12);
+        u4(13:15) = u5(13:15);
+        u5(10:12) = u4(10:12);
+        y4(17:20) = y5(17:20);
+        y5(13:16) = y4(13:16);
     
     end
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
