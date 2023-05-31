@@ -4,10 +4,6 @@
 % Description: This scripts parses the 17 text files that make up a 
 % dataset into Matlab arrays. Run this script within the the dataset 
 % directory.
-
-clear; clc; close all;
-
-%% Load Data
 dir = '../../UTIAS-dataset/MRCLAM_Dataset1/';
 
 n_robots = 5;
@@ -39,7 +35,7 @@ for i=1:n_robots
     disp(['Reading robot ' num2str(i) ' measurements'])
     [time, barcode_num, r b] = textread([dir 'Robot' num2str(i) '_Measurement.dat'], '%f %f %f %f','commentstyle','shell');
     eval(['Robot' num2str(i) '_Measurement = [time-gt(1) barcode_num r b];']);
-    clear time barcode_num r b;
+    clear time barcode_num r b gt;
 
     disp(['Calculating robot ' num2str(i) ' covariance'])
     eval(['[N,~] = size(Robot' num2str(i) '_Groundtruth);']);
