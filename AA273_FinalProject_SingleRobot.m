@@ -3,7 +3,13 @@ close all
 clc
 
 %% 
-run("merge_data.m")
+run("load_data.m")
+% run("merge_data.m")
+Roobot1 = merge_data(1);
+% Roobot2 = merge_data(2);
+% Roobot3 = merge_data(3);
+% Roobot4 = merge_data(4);
+% Roobot5 = merge_data(5);
 
 %% 
 
@@ -14,7 +20,6 @@ m = 2;                  % number of control input
 syms Px Py theta m1x  m1y  m2x  m2y  m3x  m3y  m4x  m4y  m5x  m5y...
                  m6x  m6y  m7x  m7y  m8x  m8y  m9x  m9y m10x m10y...
                 m11x m11y m12x m12y m13x m13y m14x m14y m15x m15y real
-%% 
 
 Pt = [Px;Py];
 Rotation_Matrix = [cos(theta) sin(theta); -sin(theta) cos(theta)];
@@ -72,23 +77,23 @@ sigma_EKF(1:n, 1:n) = 7*eye(n);         % initialize sigma_0|0 as 7I
 
 i = 1;      % simulation starts at the first row(time step) of control input 
 
-flag_feature = 6:20;
+% flag_feature = 6:20;
 
 while i < simTime
     
     dt = round( Robot(i+1,1) - Robot(i,1), 3 );         % rounded
     j = i + 1;
+    y = [];
 
     % import measurement data, if there is any
     if Robot(j,2) == 1
-        y = [];
         while Robot(j+1,2) == 1 
             j = j + 1;
         end
         for k = i+1:j
-            if ismember(Robot(k,3), flag_feature)
-                y = [y; Robot(k,3:5)];
-            end
+%             if ismember(Robot(k,3), flag_feature)
+               y = [y; Robot(k,3:5)];
+%             end
         end
     end
 
@@ -146,7 +151,6 @@ while i < simTime
     sigma_pred = A * sigma_EKF(n*i-n+1:n*i,:) * transpose(A) + Q;
 
     % UPDATE
-
 %     Px = mu_pred(1); Py = mu_pred(2);
 %     m1x = mu_pred(4); m1y = mu_pred(5);
 %     m2x = mu_pred(6); m2y = mu_pred(7);
@@ -165,9 +169,16 @@ while i < simTime
          ([m2x; m2y] - [Px; Py])/norm([m2x; m2y] - [Px; Py]);...
          ([m3x; m3y] - [Px; Py])/norm([m3x; m3y] - [Px; Py]);...
          ([m4x; m4y] - [Px; Py])/norm([m4x; m4y] - [Px; Py])];
-
-    mu_EKF(:,i+1) = mu_pred + K * (y(:,i) - g);
-    sigma_EKF(:,n*i+1:n*i+n) = sigma_pred - K * C * sigma_pred;
+    
+    if ~isempty(y)
+        % mu_EKF(:,i+1) = mu_pred + K * (y - g);
+        % sigma_EKF(:,n*i+1:n*i+n) = sigma_pred - K * C * sigma_pred;
+        % Go to OH and ask, how can we update the covariance matrix with
+        % finite measurement. (mu is relatively easy)
+    else
+        mu_EKF(:,i+1) = mu_pred;
+        sigma_EKF(:,n*i+1:n*i+n) = sigma_pred;
+    end
 
 %     % check observability matrix
 %     observability_matrix = [C; C*A; C*A*A];
@@ -181,7 +192,7 @@ while i < simTime
 %         controllable(i) = 1;
 %     end
 
-    i = j;
+    i = j; % 如果dataset把u加到後面了，則 i = j + 1
 end 
 
 mu_EKF = rmmissing(mu_EKF, 1);
