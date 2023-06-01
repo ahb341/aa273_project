@@ -18,24 +18,38 @@ disp('Reading landmark groundtruth')
 [subject_num x y x_sd y_sd] = textread([dir,'Landmark_Groundtruth.dat'], '%f %f %f %f %f','commentstyle','shell');
 Landmark_Groundtruth = [subject_num x y x_sd y_sd];
 clear subject_num x y x_sd y_sd;
-n_landmarks = length(Landmark_Groundtruth); 
+n_landmarks = length(Landmark_Groundtruth);
+% landmark 1-15 id
+IDList = [72,27,54,70,36,18,25,9,81,16,90,61,45,7,63];
 
 for i=1:n_robots
- 
+    % read groundtruth
     disp(['Reading robot ' num2str(i) ' groundtruth'])
     [gt x y theta] = textread([dir 'Robot' num2str(i) '_Groundtruth.dat'], '%f %f %f %f','commentstyle','shell');
     eval(['Robot' num2str(i) '_Groundtruth = [gt-gt(1) x y theta];']); 
     clear x y theta;
-
+    
+    % read odometry
     disp(['Reading robot ' num2str(i) ' odometry'])
     [time, v, w] = textread([dir 'Robot' num2str(i) '_Odometry.dat'], '%f %f %f','commentstyle','shell');
     eval(['Robot' num2str(i) '_Odometry = [time-gt(1) v w];']);
     clear time v w;
     
+    % read measurements
     disp(['Reading robot ' num2str(i) ' measurements'])
     [time, barcode_num, r b] = textread([dir 'Robot' num2str(i) '_Measurement.dat'], '%f %f %f %f','commentstyle','shell');
     eval(['Robot' num2str(i) '_Measurement = [time-gt(1) barcode_num r b];']);
-    clear time barcode_num r b gt;
+    % remove non-landmark measurements
+    j = 1; len = eval(['length(Robot' num2str(i) '_Measurement)']);
+    while j <= len
+        if ~ismember(eval(['Robot' num2str(i) '_Measurement(j,2)']),IDList)
+            eval(['Robot' num2str(i) '_Measurement(j,:) = [];']);
+        else
+            j = j+1;
+        end
+        len = eval(['length(Robot' num2str(i) '_Measurement)']);
+    end
+    clear time barcode_num r b gt len;
 
     disp(['Calculating robot ' num2str(i) ' covariance'])
     eval(['[N,~] = size(Robot' num2str(i) '_Groundtruth);']);

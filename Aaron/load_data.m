@@ -5,7 +5,7 @@
 % dataset into Matlab arrays. Run this script within the the dataset 
 % directory.
 
-clear; clc; close all;
+% clear; clc; close all;
 
 %% Load Data
 dir = '../UTIAS-dataset/MRCLAM_Dataset1/';

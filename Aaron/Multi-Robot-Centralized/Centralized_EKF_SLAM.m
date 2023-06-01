@@ -5,4 +5,4 @@ nx = 3 + 15*2; % dim of state
 nu = 2;        % dim of control input
 
 %% Get measurement model and jacobian functions
-run("gjac.m")
+%run("gjac.m")
