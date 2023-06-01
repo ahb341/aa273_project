@@ -57,7 +57,7 @@ C_t = jacobian(g_t, x_t);
 % simulate the first 100000 rows 
 
 simTime = 100000;
-initial_pose = Robot1_Groundtruth(350, 2:4);
+initial_pose = Robot5_Groundtruth(350, 2:4);
 initial_guess_landmarks = zeros(1,30);
 
 mu_EKF = NaN(simTime,n);  
@@ -75,24 +75,24 @@ while i < simTime
     
     disp(i)
 
-    dt = round( robot1(i+1,1) - robot1(i,1), 3 );         % rounded
+    dt = round( robot5(i+1,1) - robot5(i,1), 3 );         % rounded
     j = i + 1;
     y = [];
 
     % import measurement data, if there is any
-    if robot1(j,2) == 1
-        while robot1(j+1,2) == 1 
+    if robot5(j,2) == 1
+        while robot5(j+1,2) == 1 
             j = j + 1;
         end
         for k = i+1:j
-            y = [y; robot1(k,3:5)];
+            y = [y; robot5(k,3:5)];
         end
     end
 
     % PREDICTION
-    mu_pred = [mu_EKF(i,1)+dt*robot1(i,3)*cos(mu_EKF(i,3)) ...
-               mu_EKF(i,2)+dt*robot1(i,3)*sin(mu_EKF(i,3)) ...
-               mu_EKF(i,3)+dt*robot1(i,4) ...
+    mu_pred = [mu_EKF(i,1)+dt*robot5(i,3)*cos(mu_EKF(i,3)) ...
+               mu_EKF(i,2)+dt*robot5(i,3)*sin(mu_EKF(i,3)) ...
+               mu_EKF(i,3)+dt*robot5(i,4) ...
                mu_EKF(i,4) ...
                mu_EKF(i,5) ...
                mu_EKF(i,6) ...
@@ -124,8 +124,8 @@ while i < simTime
                mu_EKF(i,32) ...
                mu_EKF(i,33)];
     
-    A_pose_part = [1 0 -dt*robot1(i,3)*sin(mu_EKF(i,3));...
-                   0 1  dt*robot1(i,3)*cos(mu_EKF(i,3));...
+    A_pose_part = [1 0 -dt*robot5(i,3)*sin(mu_EKF(i,3));...
+                   0 1  dt*robot5(i,3)*cos(mu_EKF(i,3));...
                    0 0                  1];
     A_landmark_part = eye(30);
 
@@ -272,7 +272,7 @@ end
 %% plot
 
 figure(1)
-p1 = plot(Robot1_Groundtruth(350:end,2), Robot1_Groundtruth(350:end,3), 'LineWidth', 1);
+p1 = plot(Robot5_Groundtruth(350:end,2), Robot5_Groundtruth(350:end,3), 'LineWidth', 1);
 hold on
 grid on 
 p2 = plot(mu_EKF(:,1),mu_EKF(:,2), 'LineWidth', 1);
