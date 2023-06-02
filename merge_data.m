@@ -1,9 +1,9 @@
 run("load_data.m");
 robot1 = merge_dat(Robot1_Measurement, Robot1_Odometry); 
-% robot2 = merge_dat(Robot2_Measurement, Robot2_Odometry); 
-% robot3 = merge_dat(Robot3_Measurement, Robot3_Odometry); 
-% robot4 = merge_dat(Robot4_Measurement, Robot4_Odometry); 
-% robot5 = merge_dat(Robot5_Measurement, Robot5_Odometry); 
+robot2 = merge_dat(Robot2_Measurement, Robot2_Odometry); 
+robot3 = merge_dat(Robot3_Measurement, Robot3_Odometry); 
+robot4 = merge_dat(Robot4_Measurement, Robot4_Odometry); 
+robot5 = merge_dat(Robot5_Measurement, Robot5_Odometry); 
 function Robot = merge_dat(measurements, odo)
 %     measurements = eval("Robot"+RobotNum+"_Measurement");
 %     odo = eval("Robot"+RobotNum+"_Odometry");

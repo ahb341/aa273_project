@@ -58,7 +58,11 @@ C_t = jacobian(g_t, x_t);
 
 simTime = 100000;
 initial_pose = Robot1_Groundtruth(350, 2:4);
-initial_guess_landmarks = zeros(1,30);
+% initial_guess_landmarks = zeros(1,30);
+initial_guess_landmarks = [];
+for k = 1:15
+    initial_guess_landmarks = [initial_guess_landmarks Landmark_Groundtruth(k,2:3)];
+end
 
 mu_EKF = NaN(simTime,n);  
 mu_EKF(1,:) = [initial_pose initial_guess_landmarks];       
@@ -69,6 +73,7 @@ sigma_EKF(1:n, 1:n) = 7*eye(n);         % initialize sigma_0|0 as 7I
 % observable = zeros(simTime-1,1);
 % controllable = zeros(simTime-1,1);
 
+%% 
 i = 1;      % simulation starts at the first row(time step) of control input 
 
 while i < simTime
@@ -365,4 +370,11 @@ legend('Estimated Location of Landmark 1','Groundtruth Location of Landmark 1')
          
 legend('Interpreter','latex','Location','bestoutside','FontAngle','italic','FontSize',15)
 xlabel('X Position')
-ylabel('Y Position')
+ylabel('Y Position') 
+
+% figure(4)
+% plot(1:10000,mu_EKF(1:10000,4));
+% hold on
+% plot(1:10000,Robot1_Groundtruth(1:10000,2));
+% legend()
+
