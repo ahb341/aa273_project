@@ -28,6 +28,8 @@ for i = 1:n_robots
 end
 Cref = jacobian(gref,x);
 clear g
+matlabFunction(gref,"File", "get_gref");
+matlabFunction(Cref,"File", "get_Cref");
 
 % creates the g_t equation as a string
 function str = meas_model_str(i, n_landmarks)

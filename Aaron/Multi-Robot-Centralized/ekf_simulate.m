@@ -1,6 +1,6 @@
 %% setup
 % simulate the first 100000 rows 
-sim_time = 1000;
+sim_time = 100000;
 
 % pose is 
 % [x1 ... x5 m1 ... m15]
@@ -13,7 +13,7 @@ x4_0 = Robot4_Groundtruth(1,2:4);
 x5_0 = Robot5_Groundtruth(1,2:4);
 x0 = [x1_0 x2_0 x3_0 x4_0 x5_0];
 
-initial_guess_landmarks = zeros(1,30);
+initial_guess_landmarks = 1e-6*ones(1,30);
 
 mu_ekf = NaN(sim_time,nx);  
 mu_ekf(1,:) = [x0 initial_guess_landmarks]; 
@@ -83,9 +83,14 @@ while (k < sim_time)
         m15x = mu_pred(44); m15y = mu_pred(45);
 
         % get the symbolic expressions as values
-        gref = subs(gref); Cref = subs(Cref); 
-        RR1 = subs(RR1); RR2 = subs(RR2); RR3 = subs(RR3);
-        RR4 = subs(RR4); RR5 = subs(RR5);
+        gref = get_gref(m10x,m10y,m11x,m11y,m12x,m12y,m13x,m13y,m14x,...
+            m14y,m15x,m15y,m1x,m2x,m3x,m4x,m5x,m6x,m7x,m8x,m9x,m1y,m2y,...
+            m3y,m4y,m5y,m6y,m7y,m8y,m9y,p1x,p2x,p3x,p4x,p5x,p1y,p2y,p3y,...
+            p4y,p5y,th1,th2,th3,th4,th5);
+        Cref = get_Cref(m10x,m10y,m11x,m11y,m12x,m12y,m13x,m13y,m14x,...
+            m14y,m15x,m15y,m1x,m2x,m3x,m4x,m5x,m6x,m7x,m8x,m9x,m1y,m2y,...
+            m3y,m4y,m5y,m6y,m7y,m8y,m9y,p1x,p2x,p3x,p4x,p5x,p1y,p2y,p3y,...
+            p4y,p5y,th1,th2,th3,th4,th5);
 
         % determine the appropriate matrices
         yidx = 1;
@@ -113,8 +118,12 @@ while (k < sim_time)
         K = sigma_pred * C' / (C*sigma_pred*C' + R);
 
         % finish up update step and fix indices
-%         mu_EKF(i+1,:) = mu_pred + (K * (ycurr - gcurr))';
-%         sigma_EKF(n*i+1:n*i+n,:) = sigma_pred - K * Ccurr * sigma_pred;
+        mu_ekf(k+1,:) = mu_pred + (K * (y - g))';
+        sigma_ekf(nx*k+1:nx*k+nx,:) = sigma_pred - K * C * sigma_pred;
+
+    else
+       mu_ekf(k+1,:) = mu_pred;
+       sigma_ekf(nx*k+1:nx*k+nx,:) = sigma_pred;
 
     end
 
