@@ -41,7 +41,7 @@ while (k < sim_time)
             robot_num = Robot(ii,6);
             u_prev(robot_num,:) = Robot(ii,3:4);
         else
-            % measurement daata
+            % measurement data
             y_tmp = [y_tmp; Robot(ii,3:6)]; % includes the robot number
         end
         ii = ii+1;
@@ -83,33 +83,27 @@ while (k < sim_time)
         m15x = mu_pred(44); m15y = mu_pred(45);
 
         % get the symbolic expressions as values
-        C1 = subs(C1); C2 = subs(C2); C3 = subs(C3); C4 = subs(C4); 
-        C5 = subs(C5); RR1 = subs(RR1); RR2 = subs(RR2); RR3 = subs(RR3);
-        RR4 = subs(RR4); RR5 = subs(RR5); g1 = subs(g1); g2 = subs(g2);
-        g3 = subs(g3); g4 = subs(g4); g5 = subs(g5);
+        gref = subs(gref); Cref = subs(Cref); 
+        RR1 = subs(RR1); RR2 = subs(RR2); RR3 = subs(RR3);
+        RR4 = subs(RR4); RR5 = subs(RR5);
 
         % determine the appropriate matrices
         yidx = 1;
         y = []; C = []; g = [];
         for i = 1:n_robots
-            if i == 1
-                CC = C1; gg = g1;
-            elseif i == 2
-                CC = C2; gg = g2;
-            elseif i == 3
-                CC = C3; gg = g3;
-            elseif i == 4
-                CC = C4; gg = g4;
-            else
-                CC = C5; gg = g5;
-            end
             j = yidx;
-            while ( j < size(y_tmp,1) && y_tmp(j,4) == i)
-                %% FIX C AND G JACOBIAN CALC SO THEY ARE THE RIGHT SIZE IN GJAC.M
+            while ( j <= size(y_tmp,1) && y_tmp(j,4) == i)
                 % add all the measurements for robot i
-                y = [y; y_tmp(j,2); y_tmp(j,3)];
-                C = [C; CC(2*y_tmp(j,1)-1,:); CC(2*y_tmp(j,1),:)];
-                g = [g; gg(2*y_tmp(j,1)-1); gg(2*y_tmp(j,1))];
+                % 1) add the range bearing measurement of a landmark
+                y = [y; y_tmp(j,2); y_tmp(j,3)]; 
+                % 2) add the associated measurement model
+                map_num = y_tmp(j,1);
+                nm = 2*n_landmarks;
+                gidx = nm*(i-1) + 2*(map_num-1) + 1;
+                g = [g; gref(gidx:gidx+1)];
+                % 3) add the associated jacobian
+                C = [C; Cref(gidx:gidx+1,:)];
+
                 j = j + 1;
             end
             yidx = j;
@@ -117,6 +111,10 @@ while (k < sim_time)
 
         R = 0.1*eye(size(y,1));
         K = sigma_pred * C' / (C*sigma_pred*C' + R);
+
+        % finish up update step and fix indices
+%         mu_EKF(i+1,:) = mu_pred + (K * (ycurr - gcurr))';
+%         sigma_EKF(n*i+1:n*i+n,:) = sigma_pred - K * Ccurr * sigma_pred;
 
     end
 
