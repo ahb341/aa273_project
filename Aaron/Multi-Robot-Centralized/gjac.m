@@ -1,3 +1,4 @@
+disp("Calculating measurement Jacobian")
 %% generate symbolic variables for map
 for j = 1:n_landmarks
     eval(['syms m' num2str(j) 'x m' num2str(j) 'y real']);

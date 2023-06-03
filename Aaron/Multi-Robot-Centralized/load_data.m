@@ -108,20 +108,19 @@ for i=1:n_robots
     eval(['u' num2str(i) '_sz = size(u' num2str(i) ');']);
     % Initialization of proper size
     eval(['Robot' num2str(i) ' = zeros(z' num2str(i) '_sz(1) + u' ...
-        num2str(i) '_sz(1), 1+max(u' num2str(i) '_sz(2),z' num2str(i) ...
+        num2str(i) '_sz(1), 2+max(u' num2str(i) '_sz(2),z' num2str(i) ...
         '_sz(2)));']);
-    eval(['Robot' num2str(i) ' = zeros(z' num2str(i) '_sz(1)+u' ...
-        num2str(i) '_sz(1), 1+max(u' num2str(i) '_sz(2),z' ...
-        num2str(i) '_sz(2)));']);
     % Populate first measurements. 
     eval(['Robot' num2str(i) '(1:z' num2str(i) '_sz(1),:) = [z' ...
-        num2str(i) ', ones(z' num2str(i) '_sz(1),1)];']); 
+        num2str(i) ', ones(z' num2str(i) '_sz(1),1)' ...
+        ', ' num2str(i) '*ones(z' num2str(i) '_sz(1),1)];']); 
     % Populate odo, since it has a missing column, populate with NaN
     eval(['Robot' num2str(i) '(z' num2str(i) '_sz(1)+1:end,:) = [u' ...
         num2str(i) ', ones(u' num2str(i) '_sz(1),1)*NaN, zeros(u' ...
-        num2str(i) '_sz(1),1)];']);
-    % Change column order; [time, indicator, info1, info2, info3 or NaN]
-    eval(['Robot' num2str(i) ' = Robot' num2str(i) '(:,[1 5 2 3 4]);']);
+        num2str(i) '_sz(1),1)' ...
+        ', ' num2str(i) '*ones(u' num2str(i) '_sz(1),1)];']);
+    % Change column order; [time, indicator, info1, info2, info3 or NaN, robot #]
+    eval(['Robot' num2str(i) ' = Robot' num2str(i) '(:,[1 5 2 3 4 6]);']);
     % If a measurement, indicator column (2) will be =1. 
             % Info 1, info2, and info3 columns will be populated
     % If an odometry, indicator column will be =0,
@@ -149,4 +148,6 @@ for i=1:n_robots
     eval(['Robot' num2str(i) '=Robot;']);
 end
 clear i dir Robot j k u
+% combine everything
+Robot = sortrows([Robot1;Robot2;Robot3;Robot4;Robot5]);
 disp('Parsing Complete')
