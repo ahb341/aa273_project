@@ -1,6 +1,6 @@
 %% setup
 % simulate the first 100000 rows 
-sim_time = 100000;
+sim_time = 10000;
 
 % pose is 
 % [x1 ... x5 m1 ... m15]
@@ -20,6 +20,7 @@ end
 
 mu_ekf = NaN(sim_time,nx);  
 mu_ekf(1,:) = [x0 initial_guess_landmarks]; 
+mu_pred = mu_ekf(1,:);
 clear x1_0 x2_0 x3_0 x4_0 x5_0
 
 sigma_ekf = NaN(nx*sim_time,nx);
@@ -32,12 +33,16 @@ u_prev = zeros(5,2); % row is for robot 1-5, col is the control input
 u_curr = zeros(5,2);
 t_prev = [Robot1(1,1); Robot2(1,1); Robot3(1,1); Robot4(1,1); Robot5(1,1)];
 dt = zeros(5,1);
+figure(1)
+hold on
 while (k < sim_time)
     disp(k)
     
     for i = 1:n_robots
+        dt(i) = round(Robot(k,1) - t_prev(i), 3);
+        if (dt(i) < 0)
+            dt
         if (Robot(k,1) >= t_prev(i) && Robot(k,6) == i)
-            dt(i) = round(Robot(k,1) - t_prev(i), 3);
             t_prev(i) = Robot(k,1);
         end
 %         t = Robot(k,1);
@@ -67,6 +72,9 @@ while (k < sim_time)
 
     % PREDICTION
     mu_pred = f(mu_ekf(k,:),u_prev,dt,n_robots);
+    mu_pred = f(mu_pred,u_prev,dt,n_robots);
+    plot(mu_pred(1,1),mu_pred(1,2),'b.')
+
     A = fjac(mu_ekf(k,:),u_prev,dt,n_robots,n_landmarks);
 %     Q = dt*[0.1*eye(3*n_robots) zeros(3*n_robots,2*n_landmarks); ...
 %         zeros(2*n_landmarks,3*n_robots) 0.01*eye(2*n_landmarks)];
@@ -148,6 +156,8 @@ while (k < sim_time)
 
     k = k + 1;
 end
+%%
+plot(Robot1_Groundtruth(1:10000,2),Robot1_Groundtruth(1:10000,3))
 
 % dynamics model for 5 robots
 % x: state 1x45

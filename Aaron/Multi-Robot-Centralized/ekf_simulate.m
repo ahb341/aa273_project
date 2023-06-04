@@ -20,6 +20,7 @@ end
 
 mu_ekf = NaN(sim_time,nx);  
 mu_ekf(1,:) = [x0 initial_guess_landmarks]; 
+mu_pred = mu_ekf(1,:);
 clear x1_0 x2_0 x3_0 x4_0 x5_0
 
 sigma_ekf = NaN(nx*sim_time,nx);
@@ -36,8 +37,12 @@ while (k < sim_time)
     disp(k)
     
     for i = 1:n_robots
-        if (Robot(k,1) >= t_prev(i) && Robot(k,6) == i)
-            dt(i) = round(Robot(k,1) - t_prev(i), 3);
+        dt(i) = round(Robot(k,1) - t_prev(i), 3);
+        if (dt(i) < 0)
+            dt(i) = 0;
+        end
+
+        if (Robot(k,6) == i)
             t_prev(i) = Robot(k,1);
         end
 %         t = Robot(k,1);
@@ -67,6 +72,7 @@ while (k < sim_time)
 
     % PREDICTION
     mu_pred = f(mu_ekf(k,:),u_prev,dt,n_robots);
+
     A = fjac(mu_ekf(k,:),u_prev,dt,n_robots,n_landmarks);
 %     Q = dt*[0.1*eye(3*n_robots) zeros(3*n_robots,2*n_landmarks); ...
 %         zeros(2*n_landmarks,3*n_robots) 0.01*eye(2*n_landmarks)];
