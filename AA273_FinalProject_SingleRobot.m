@@ -137,7 +137,7 @@ while i < simTime
     A = [A_pose_part  zeros(3,30);...
          zeros(30,3)  A_landmark_part];
 
-    Q = [Q1 zeros(3,30); zeros(30,3) 0.01*eye(30)]; 
+%     Q = [Q1 zeros(3,30); zeros(30,3) 0.01*eye(30)]; 
     % NOT SURE if I can do this. 
     % Basically saying that there is cross covariance between each pose
     % state, but the distribution of each landmark position is independent
@@ -145,6 +145,7 @@ while i < simTime
     % If we cannot do this operation, it probably means that we might not
     % be able to recover the original map. 
 
+    Q = 0.01*dt*eye(33);
     sigma_pred = A * sigma_EKF(n*i-n+1:n*i,:) * A' + Q;
 
     % UPDATE
@@ -275,16 +276,34 @@ while i < simTime
 end 
 
 %% plot
+close all
 
 figure(1)
 p1 = plot(Robot1_Groundtruth(350:end,2), Robot1_Groundtruth(350:end,3), 'LineWidth', 1);
 hold on
 grid on 
 p2 = plot(mu_EKF(:,1),mu_EKF(:,2), 'LineWidth', 1);
+p3 = plot(Landmark_Groundtruth(1,2), Landmark_Groundtruth(1,3), 'ko', 'LineWidth', 2);
+p4 = plot(Landmark_Groundtruth(2,2), Landmark_Groundtruth(2,3), 'ko', 'LineWidth', 2);
+p5 = plot(Landmark_Groundtruth(3,2), Landmark_Groundtruth(3,3), 'ko', 'LineWidth', 2);
+p6 = plot(Landmark_Groundtruth(4,2), Landmark_Groundtruth(4,3), 'ko', 'LineWidth', 2);
+p7 = plot(Landmark_Groundtruth(5,2), Landmark_Groundtruth(5,3), 'ko', 'LineWidth', 2);
+p8 = plot(Landmark_Groundtruth(6,2), Landmark_Groundtruth(6,3), 'ko', 'LineWidth', 2);
+p9 = plot(Landmark_Groundtruth(7,2), Landmark_Groundtruth(7,3), 'ko', 'LineWidth', 2);
+p10 = plot(Landmark_Groundtruth(8,2), Landmark_Groundtruth(8,3), 'ko', 'LineWidth', 2);
+p11 = plot(Landmark_Groundtruth(9,2), Landmark_Groundtruth(9,3), 'ko', 'LineWidth', 2);
+p12 = plot(Landmark_Groundtruth(10,2), Landmark_Groundtruth(10,3), 'ko', 'LineWidth', 2);
+p13 = plot(Landmark_Groundtruth(11,2), Landmark_Groundtruth(11,3), 'ko', 'LineWidth', 2);
+p14 = plot(Landmark_Groundtruth(12,2), Landmark_Groundtruth(12,3), 'ko', 'LineWidth', 2);
+p15 = plot(Landmark_Groundtruth(13,2), Landmark_Groundtruth(13,3), 'ko', 'LineWidth', 2);
+p16 = plot(Landmark_Groundtruth(14,2), Landmark_Groundtruth(14,3), 'ko', 'LineWidth', 2);
+p17 = plot(Landmark_Groundtruth(15,2), Landmark_Groundtruth(15,3), 'ko', 'LineWidth', 2);
 legend([p1 p2], {'Actual Location Trajectory','Estimated Location Trajectory by EKF'})
 legend('Interpreter','latex','Location','best','FontAngle','italic','FontSize',15)
 xlabel('X Position')
 ylabel('Y Position')
+
+%% 
 
 figure(2)
 p1 = scatter(mu_EKF(:,4),mu_EKF(:,5), '.');
@@ -372,9 +391,84 @@ legend('Interpreter','latex','Location','bestoutside','FontAngle','italic','Font
 xlabel('X Position')
 ylabel('Y Position') 
 
-% figure(4)
-% plot(1:10000,mu_EKF(1:10000,4));
-% hold on
-% plot(1:10000,Robot1_Groundtruth(1:10000,2));
-% legend()
+figure(4)
+plot(1:80000,mu_EKF(1:80000,1));
+hold on
+plot(1:80000,Robot1_Groundtruth(1:80000,2));
+legend()
 
+figure(5)
+plot(1:80000,mu_EKF(1:80000,4));
+hold on
+plot(1:80000,ones(1,80000)*Landmark_Groundtruth(1,2));
+legend()
+%% 
+
+figure(6)
+p1 = plot(mu_EKF(end,4),mu_EKF(end,5), 'o', 'LineWidth', 2);
+hold on
+p2 = plot(mu_EKF(end,6),mu_EKF(end,7), 'o', 'LineWidth', 2);
+p3 = plot(mu_EKF(end,8),mu_EKF(end,9), 'o', 'LineWidth', 2);
+p4 = plot(mu_EKF(end,10),mu_EKF(end,11), 'o', 'LineWidth', 2);
+p5 = plot(mu_EKF(end,12),mu_EKF(end,13), 'o', 'LineWidth', 2);
+p6 = plot(mu_EKF(end,14),mu_EKF(end,15), 'o', 'LineWidth', 2);
+p7 = plot(mu_EKF(end,16),mu_EKF(end,17), 'o', 'LineWidth', 2)
+p8 = plot(mu_EKF(end,18),mu_EKF(end,19), 'o', 'LineWidth', 2)
+p9 = plot(mu_EKF(end,20),mu_EKF(end,21), 'o', 'LineWidth', 2)
+p10 = plot(mu_EKF(end,22),mu_EKF(end,23), 'o', 'LineWidth', 2)
+p11 = plot(mu_EKF(end,24),mu_EKF(end,25), 'o', 'LineWidth', 2)
+p12 = plot(mu_EKF(end,26),mu_EKF(end,27), 'o', 'LineWidth', 2)
+p13 = plot(mu_EKF(end,28),mu_EKF(end,29), 'o', 'LineWidth', 2)
+p14 = plot(mu_EKF(end,30),mu_EKF(end,31), 'o', 'LineWidth', 2)
+p15 = plot(mu_EKF(end,32),mu_EKF(end,33), 'o', 'LineWidth', 2)
+p16 = plot(Landmark_Groundtruth(1,2), Landmark_Groundtruth(1,3), 'ko', 'LineWidth', 2);
+p17 = plot(Landmark_Groundtruth(2,2), Landmark_Groundtruth(2,3), 'ko', 'LineWidth', 2);
+p18 = plot(Landmark_Groundtruth(3,2), Landmark_Groundtruth(3,3), 'ko', 'LineWidth', 2);
+p19 = plot(Landmark_Groundtruth(4,2), Landmark_Groundtruth(4,3), 'ko', 'LineWidth', 2);
+p20 = plot(Landmark_Groundtruth(5,2), Landmark_Groundtruth(5,3), 'ko', 'LineWidth', 2);
+p21 = plot(Landmark_Groundtruth(6,2), Landmark_Groundtruth(6,3), 'ko', 'LineWidth', 2);
+p22 = plot(Landmark_Groundtruth(7,2), Landmark_Groundtruth(7,3), 'ko', 'LineWidth', 2);
+p23 = plot(Landmark_Groundtruth(8,2), Landmark_Groundtruth(8,3), 'ko', 'LineWidth', 2);
+p24 = plot(Landmark_Groundtruth(9,2), Landmark_Groundtruth(9,3), 'ko', 'LineWidth', 2);
+p25 = plot(Landmark_Groundtruth(10,2), Landmark_Groundtruth(10,3), 'ko', 'LineWidth', 2);
+p26 = plot(Landmark_Groundtruth(11,2), Landmark_Groundtruth(11,3), 'ko', 'LineWidth', 2);
+p27 = plot(Landmark_Groundtruth(12,2), Landmark_Groundtruth(12,3), 'ko', 'LineWidth', 2);
+p28 = plot(Landmark_Groundtruth(13,2), Landmark_Groundtruth(13,3), 'ko', 'LineWidth', 2);
+p29 = plot(Landmark_Groundtruth(14,2), Landmark_Groundtruth(14,3), 'ko', 'LineWidth', 2);
+p30 = plot(Landmark_Groundtruth(15,2), Landmark_Groundtruth(15,3), 'ko', 'LineWidth', 2);
+
+legend([p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 p22 p23 p24 p25 p26 p27 p28 p29 p30],...
+        {'Estimated Location of Landmark 1',...
+         'Estimated Location of Landmark 2',...
+         'Estimated Location of Landmark 3',...
+         'Estimated Location of Landmark 4',...
+         'Estimated Location of Landmark 5',...
+         'Estimated Location of Landmark 6',...
+         'Estimated Location of Landmark 7',...
+         'Estimated Location of Landmark 8',...
+         'Estimated Location of Landmark 9',...
+         'Estimated Location of Landmark 10',...
+         'Estimated Location of Landmark 11',...
+         'Estimated Location of Landmark 12',...
+         'Estimated Location of Landmark 13',...
+         'Estimated Location of Landmark 14',...
+         'Estimated Location of Landmark 15',...
+         'Groundtruth Location of Landmark 1',...
+         'Groundtruth Location of Landmark 2',...
+         'Groundtruth Location of Landmark 3',...
+         'Groundtruth Location of Landmark 4',...
+         'Groundtruth Location of Landmark 5',...
+         'Groundtruth Location of Landmark 6',...
+         'Groundtruth Location of Landmark 7',...
+         'Groundtruth Location of Landmark 8',...
+         'Groundtruth Location of Landmark 9',...
+         'Groundtruth Location of Landmark 10',...
+         'Groundtruth Location of Landmark 11',...
+         'Groundtruth Location of Landmark 12',...
+         'Groundtruth Location of Landmark 13',...
+         'Groundtruth Location of Landmark 14',...
+         'Groundtruth Location of Landmark 15'})
+
+legend('Interpreter','latex','Location','bestoutside','FontAngle','italic','FontSize',15)
+xlabel('X Position')
+ylabel('Y Position')

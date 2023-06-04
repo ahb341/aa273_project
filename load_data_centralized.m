@@ -4,7 +4,7 @@
 % Description: This scripts parses the 17 text files that make up a 
 % dataset into Matlab arrays. Run this script within the the dataset 
 % directory.
-dir = '../../UTIAS-dataset/MRCLAM_Dataset1/';
+dir = 'UTIAS-dataset/MRCLAM_Dataset1/';
 
 n_robots = 5;
 

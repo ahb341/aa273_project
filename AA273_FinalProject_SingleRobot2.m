@@ -58,7 +58,11 @@ C_t = jacobian(g_t, x_t);
 
 simTime = 100000;
 initial_pose = Robot2_Groundtruth(350, 2:4);
-initial_guess_landmarks = zeros(1,30);
+% initial_guess_landmarks = zeros(1,30);
+initial_guess_landmarks = [];
+for k = 1:15
+    initial_guess_landmarks = [initial_guess_landmarks Landmark_Groundtruth(k,2:3)];
+end
 
 mu_EKF = NaN(simTime,n);  
 mu_EKF(1,:) = [initial_pose initial_guess_landmarks];       
@@ -132,13 +136,14 @@ while i < simTime
     A = [A_pose_part  zeros(3,30);...
          zeros(30,3)  A_landmark_part];
 
-    Q = [Q1 zeros(3,30); zeros(30,3) 0.01*eye(30)]; 
+%     Q = [Q1 zeros(3,30); zeros(30,3) 0.01*eye(30)]; 
     % NOT SURE if I can do this. 
     % Basically saying that there is cross covariance between each pose
     % state, but the distribution of each landmark position is independent
     % with all other states.
     % If we cannot do this operation, it probably means that we might not
     % be able to recover the original map. 
+    Q = 0.01*dt*eye(33);
 
     sigma_pred = A * sigma_EKF(n*i-n+1:n*i,:) * A' + Q;
 
