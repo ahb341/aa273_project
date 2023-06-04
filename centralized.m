@@ -3,4 +3,4 @@ close all
 clc 
 %% 
 
-run("load_data_centralized.m")
+run("merge_data_centralized.m")

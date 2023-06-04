@@ -276,7 +276,6 @@ while i < simTime
 end 
 
 %% plot
-close all
 
 figure(1)
 p1 = plot(Robot1_Groundtruth(350:end,2), Robot1_Groundtruth(350:end,3), 'LineWidth', 1);
