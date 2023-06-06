@@ -1,6 +1,9 @@
 %% setup
-% simulate the first 100000 rows 
-sim_time = 100000;
+tstart = 9.4250;
+tfin = 1000;
+dt = 0.001;
+tarr = tstart:dt:tfin;
+tlen = length(tarr);
 
 % pose is 
 % [x1 ... x5 m1 ... m15]
@@ -18,66 +21,56 @@ for k = 1:15
     initial_guess_landmarks = [initial_guess_landmarks Landmark_Groundtruth(k,2:3)];
 end
 
-mu_ekf = NaN(sim_time,nx);  
+mu_ekf = NaN(tlen,nx);  
 mu_ekf(1,:) = [x0 initial_guess_landmarks]; 
-mu_pred = mu_ekf(1,:);
+% mu_pred = mu_ekf(1,:);
 clear x1_0 x2_0 x3_0 x4_0 x5_0
 
-sigma_ekf = NaN(nx*sim_time,nx);
-sigma_ekf(1:nx, 1:nx) = 7*eye(nx);         % initialize sigma_0|0 as 7I
+sigma_ekf = NaN(nx*tlen,nx);
+sigma_ekf(1:nx, 1:nx) = blkdiag(0.001*eye(15),1*eye(30));
 
 %% simulate
 k = 1;
 % t = Robot(1,1);
 u_prev = zeros(5,2); % row is for robot 1-5, col is the control input
 u_curr = zeros(5,2);
-t_prev = [Robot1(1,1); Robot2(1,1); Robot3(1,1); Robot4(1,1); Robot5(1,1)];
-dt = zeros(5,1);
-while (k < sim_time)
-    disp(k)
-    
-    for i = 1:n_robots
-        dt(i) = round(Robot(k,1) - t_prev(i), 3);
-        if (dt(i) < 0)
-            dt(i) = 0;
-        end
+control_update = false;
+for mu_idx = 1:tlen
+    t = tarr(mu_idx);
+    disp(t)
 
-        if (Robot(k,6) == i)
-            t_prev(i) = Robot(k,1);
+    if (abs(t-Robot(k,1)) < dt)
+        % update last control inputs and import measurement data, if any
+        ii = k;
+        y_tmp = [];
+        while Robot(ii,1) == Robot(k,1)
+            if Robot(ii,2) == 0
+                % control data
+                robot_num = Robot(ii,6);
+                u_curr(robot_num,:) = Robot(ii,3:4);
+                control_update = true;
+            else
+                % measurement data
+                y_tmp = [y_tmp; Robot(ii,3:6)]; % includes the robot number
+            end
+            ii = ii+1;
         end
-%         t = Robot(k,1);
-    end
-
-
-    % update last control inputs and import measurement data, if any
-    ii = k;
-    y_tmp = [];
-    while Robot(ii,1) == Robot(k,1)
-        if Robot(ii,2) == 0
-            % control data
-            robot_num = Robot(ii,6);
-            u_prev = u_curr;
-            u_curr(robot_num,:) = Robot(ii,3:4);
-        else
-            % measurement data
-            y_tmp = [y_tmp; Robot(ii,3:6)]; % includes the robot number
+        % sort measurements by robot num
+        if ~isempty(y_tmp)
+            y_tmp = sortrows(y_tmp,4);
         end
-        ii = ii+1;
-    end
-    % sort measurements by robot num
-    if ~isempty(y_tmp)
-        y_tmp = sortrows(y_tmp,4);
+        k = ii;
     end
 
 
     % PREDICTION
-    mu_pred = f(mu_ekf(k,:),u_prev,dt,n_robots);
+    mu_pred = f(mu_ekf(mu_idx,:),u_prev,dt,n_robots);
 
-    A = fjac(mu_ekf(k,:),u_prev,dt,n_robots,n_landmarks);
+    A = fjac(mu_ekf(mu_idx,:),u_prev,dt,n_robots,n_landmarks);
 %     Q = dt*[0.1*eye(3*n_robots) zeros(3*n_robots,2*n_landmarks); ...
 %         zeros(2*n_landmarks,3*n_robots) 0.01*eye(2*n_landmarks)];
-    Q = 0.01*max(dt)*eye(45);
-    sigma_pred = A * sigma_ekf(nx*k-nx+1:nx*k,:) * A' + Q;
+    Q = 0.01*dt*eye(45);
+    sigma_pred = A * sigma_ekf(nx*mu_idx-nx+1:nx*mu_idx,:) * A' + Q;
 
     % UPDATE
     if ~isempty(y_tmp)
@@ -134,12 +127,12 @@ while (k < sim_time)
             yidx = j;
         end
 
-        R = 0.1*eye(size(y,1));
+        R = 1*eye(size(y,1));
         K = sigma_pred * C' / (C*sigma_pred*C' + R);
 
         % finish up update step and fix indices
-        mu_ekf(k+1,:) = mu_pred + (K * (y - g))';
-        sigma_ekf(nx*k+1:nx*k+nx,:) = sigma_pred - K * C * sigma_pred;
+        mu_ekf(mu_idx+1,:) = mu_pred + (K * (y - g))';
+        sigma_ekf(nx*mu_idx+1:nx*mu_idx+nx,:) = sigma_pred - K * C * sigma_pred;
         
 %         for i = k+2:ii+1
 %             mu_ekf(k,:) = mu_ekf(k+1,:);
@@ -147,12 +140,15 @@ while (k < sim_time)
 %         end
 %         k = ii + 1;
     else
-       mu_ekf(k+1,:) = mu_pred;
-       sigma_ekf(nx*k+1:nx*k+nx,:) = sigma_pred;
+       mu_ekf(mu_idx+1,:) = mu_pred;
+       sigma_ekf(nx*mu_idx+1:nx*mu_idx+nx,:) = sigma_pred;
 
     end
 
-    k = k + 1;
+    if (control_update)
+        u_prev = u_curr;
+        control_update = false;
+    end
 end
 
 % dynamics model for 5 robots
@@ -171,7 +167,7 @@ function xpred = f(x,u,dt,n_robots)
         v = u(i,1); om = u(i,2);
 
         % calculate dynamics
-        xpred(idx:idx+2) = [px py th] + dt(i)*[v*cos(th) v*sin(th) om];
+        xpred(idx:idx+2) = [px py th] + dt*[v*cos(th) v*sin(th) om];
     end
 end
 
@@ -181,8 +177,8 @@ function A = fjac(x,u,dt,n_robots,n_landmarks)
         idx = 3*(i-1) + 1;
         th = x(idx+2); v = u(i,1);
         A_pose(idx:idx+2,idx:idx+2) = ...
-            [1 0 -dt(i)*v*sin(th);...
-             0 1  dt(i)*v*cos(th);...
+            [1 0 -dt*v*sin(th);...
+             0 1  dt*v*cos(th);...
              0 0             1];
     end
     A_landmark = eye(2*n_landmarks);
