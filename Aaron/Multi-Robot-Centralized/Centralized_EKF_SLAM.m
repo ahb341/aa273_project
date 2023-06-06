@@ -21,6 +21,21 @@ p1 = plot(Robot1_Groundtruth(:,2), ...
     'LineWidth', 1); 
 p2 = plot(mu_ekf(:,1),mu_ekf(:,2), 'b-', 'LineWidth', 2);
 grid on
+plot(Landmark_Groundtruth(1,2),Landmark_Groundtruth(1,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(2,2),Landmark_Groundtruth(2,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(3,2),Landmark_Groundtruth(3,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(4,2),Landmark_Groundtruth(4,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(5,2),Landmark_Groundtruth(5,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(6,2),Landmark_Groundtruth(6,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(7,2),Landmark_Groundtruth(7,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(8,2),Landmark_Groundtruth(8,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(9,2),Landmark_Groundtruth(9,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(10,2),Landmark_Groundtruth(10,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(11,2),Landmark_Groundtruth(11,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(12,2),Landmark_Groundtruth(12,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(13,2),Landmark_Groundtruth(13,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(14,2),Landmark_Groundtruth(14,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(15,2),Landmark_Groundtruth(15,3),'ko','LineWidth',2)
 legend([p1 p2], {'x_true','x_est'})
 legend('Interpreter','latex','Location','best','FontAngle','italic','FontSize',15)
 xlabel('X Position')
@@ -34,6 +49,21 @@ p1 = plot(Robot2_Groundtruth(:,2), ...
     'LineWidth', 1); 
 p2 = plot(mu_ekf(:,4),mu_ekf(:,5), 'b-', 'LineWidth', 2);
 grid on
+plot(Landmark_Groundtruth(1,2),Landmark_Groundtruth(1,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(2,2),Landmark_Groundtruth(2,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(3,2),Landmark_Groundtruth(3,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(4,2),Landmark_Groundtruth(4,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(5,2),Landmark_Groundtruth(5,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(6,2),Landmark_Groundtruth(6,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(7,2),Landmark_Groundtruth(7,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(8,2),Landmark_Groundtruth(8,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(9,2),Landmark_Groundtruth(9,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(10,2),Landmark_Groundtruth(10,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(11,2),Landmark_Groundtruth(11,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(12,2),Landmark_Groundtruth(12,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(13,2),Landmark_Groundtruth(13,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(14,2),Landmark_Groundtruth(14,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(15,2),Landmark_Groundtruth(15,3),'ko','LineWidth',2)
 legend([p1 p2], {'x_true','x_est'})
 legend('Interpreter','latex','Location','best','FontAngle','italic','FontSize',15)
 xlabel('X Position')
@@ -46,6 +76,21 @@ p1 = plot(Robot3_Groundtruth(:,2), ...
     Robot3_Groundtruth(:,3), '--', 'color', [.5 .5 .5], ...
     'LineWidth', 1); 
 p2 = plot(mu_ekf(:,7),mu_ekf(:,8), 'b-', 'LineWidth', 2);
+plot(Landmark_Groundtruth(1,2),Landmark_Groundtruth(1,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(2,2),Landmark_Groundtruth(2,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(3,2),Landmark_Groundtruth(3,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(4,2),Landmark_Groundtruth(4,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(5,2),Landmark_Groundtruth(5,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(6,2),Landmark_Groundtruth(6,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(7,2),Landmark_Groundtruth(7,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(8,2),Landmark_Groundtruth(8,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(9,2),Landmark_Groundtruth(9,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(10,2),Landmark_Groundtruth(10,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(11,2),Landmark_Groundtruth(11,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(12,2),Landmark_Groundtruth(12,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(13,2),Landmark_Groundtruth(13,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(14,2),Landmark_Groundtruth(14,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(15,2),Landmark_Groundtruth(15,3),'ko','LineWidth',2)
 legend([p1 p2], {'x_true','x_est'})
 legend('Interpreter','latex','Location','best','FontAngle','italic','FontSize',15)
 xlabel('X Position')
@@ -58,6 +103,21 @@ p1 = plot(Robot4_Groundtruth(:,2), ...
     Robot4_Groundtruth(:,3), '--', 'color', [.5 .5 .5], ...
     'LineWidth', 1); 
 p2 = plot(mu_ekf(:,10),mu_ekf(:,11), 'b-', 'LineWidth', 2);
+plot(Landmark_Groundtruth(1,2),Landmark_Groundtruth(1,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(2,2),Landmark_Groundtruth(2,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(3,2),Landmark_Groundtruth(3,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(4,2),Landmark_Groundtruth(4,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(5,2),Landmark_Groundtruth(5,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(6,2),Landmark_Groundtruth(6,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(7,2),Landmark_Groundtruth(7,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(8,2),Landmark_Groundtruth(8,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(9,2),Landmark_Groundtruth(9,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(10,2),Landmark_Groundtruth(10,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(11,2),Landmark_Groundtruth(11,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(12,2),Landmark_Groundtruth(12,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(13,2),Landmark_Groundtruth(13,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(14,2),Landmark_Groundtruth(14,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(15,2),Landmark_Groundtruth(15,3),'ko','LineWidth',2)
 legend([p1 p2], {'x_true','x_est'})
 legend('Interpreter','latex','Location','best','FontAngle','italic','FontSize',15)
 xlabel('X Position')
@@ -70,6 +130,21 @@ p1 = plot(Robot5_Groundtruth(:,2), ...
     Robot5_Groundtruth(:,3), '--', 'color', [.5 .5 .5], ...
     'LineWidth', 1); 
 p2 = plot(mu_ekf(:,13),mu_ekf(:,14), 'b-', 'LineWidth', 2);
+plot(Landmark_Groundtruth(1,2),Landmark_Groundtruth(1,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(2,2),Landmark_Groundtruth(2,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(3,2),Landmark_Groundtruth(3,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(4,2),Landmark_Groundtruth(4,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(5,2),Landmark_Groundtruth(5,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(6,2),Landmark_Groundtruth(6,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(7,2),Landmark_Groundtruth(7,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(8,2),Landmark_Groundtruth(8,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(9,2),Landmark_Groundtruth(9,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(10,2),Landmark_Groundtruth(10,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(11,2),Landmark_Groundtruth(11,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(12,2),Landmark_Groundtruth(12,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(13,2),Landmark_Groundtruth(13,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(14,2),Landmark_Groundtruth(14,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(15,2),Landmark_Groundtruth(15,3),'ko','LineWidth',2)
 legend([p1 p2], {'x_true','x_est'})
 legend('Interpreter','latex','Location','best','FontAngle','italic','FontSize',15)
 xlabel('X Position')
@@ -93,12 +168,21 @@ p12 = scatter(mu_ekf(:,38),mu_ekf(:,39), '.');
 p13 = scatter(mu_ekf(:,40),mu_ekf(:,41), '.');
 p14 = scatter(mu_ekf(:,42),mu_ekf(:,43), '.');
 p15 = scatter(mu_ekf(:,44),mu_ekf(:,45), '.');
-% p3 = plot(m1(1), m1(2), 'ko', 'LineWidth', 2);
-% p4 = plot(m2(1), m2(2), 'k+', 'LineWidth', 2);
-% p5 = plot(m3(1), m3(2), 'k*', 'LineWidth', 2);
-% p6 = plot(m4(1), m4(2), 'kx', 'LineWidth', 2);
-% title('2D Actual Location Trajectory of the Robot + Estimated Position of Landmark')
-% subtitle(sprintf('Simulation Time: %d sec, Time Step: %g sec', tFinal, dt))
+plot(Landmark_Groundtruth(1,2),Landmark_Groundtruth(1,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(2,2),Landmark_Groundtruth(2,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(3,2),Landmark_Groundtruth(3,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(4,2),Landmark_Groundtruth(4,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(5,2),Landmark_Groundtruth(5,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(6,2),Landmark_Groundtruth(6,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(7,2),Landmark_Groundtruth(7,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(8,2),Landmark_Groundtruth(8,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(9,2),Landmark_Groundtruth(9,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(10,2),Landmark_Groundtruth(10,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(11,2),Landmark_Groundtruth(11,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(12,2),Landmark_Groundtruth(12,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(13,2),Landmark_Groundtruth(13,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(14,2),Landmark_Groundtruth(14,3),'ko','LineWidth',2)
+plot(Landmark_Groundtruth(15,2),Landmark_Groundtruth(15,3),'ko','LineWidth',2)
 subtitle(sprintf('Initial Guess of Landmarks: m1 = [%g %g], m2 = [%g %g], m3 = [%g %g], m4 = [%g %g], m5 = [%g %g], m6 = [%g %g], m7 = [%g %g], m8 = [%g %g], m9 = [%g %g], m10 = [%g %g], m11 = [%g %g], m12 = [%g %g], m13 = [%g %g], m14 = [%g %g], m15 = [%g %g]',...
                   initial_guess_landmarks))
 
